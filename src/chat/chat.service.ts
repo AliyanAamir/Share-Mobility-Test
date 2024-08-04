@@ -73,7 +73,7 @@ export async function getMessagesAfter(
     .from(messages)
     .where(
       and(
-        gt(messages.createdAt, createdAt.toDateString()),
+        gt(messages.createdAt, createdAt),
         or(
           and(
             eq(messages.senderId, Number(userId)),
@@ -97,12 +97,14 @@ export async function getMessagesBefore(
   payload: GetMessageSchemaType,
 ): Promise<MessageType[]> {
   const { createdAt, limit, user2Id, userId } = payload;
+
+  
   const getMessages = await db
     .select()
     .from(messages)
     .where(
       and(
-        lt(messages.createdAt, createdAt.toDateString()),
+        lt(messages.createdAt, createdAt),
         or(
           and(
             eq(messages.senderId, Number(userId)),
@@ -142,8 +144,12 @@ export async function deleteMessage(
 }
 
 export async function insertMessage(
+  senderId: string,
   payload: CreateMessageSchemaType,
 ): Promise<MessageType> {
-  const [newMessage] = await db.insert(messages).values(payload).returning();
+  const [newMessage] = await db
+    .insert(messages)
+    .values({ senderId: Number(senderId), ...payload })
+    .returning();
   return newMessage;
 }

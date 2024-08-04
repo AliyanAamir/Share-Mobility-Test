@@ -25,6 +25,9 @@ export const handleUserUpdate = async (
 ) => {
   try {
     const currentUser = req.user as UserType;
+    if (!currentUser) {
+      return errorResponse(req.user, 'User Doesnt Exists');
+    }
 
     const user = await updateUser(req.body, currentUser.id);
 

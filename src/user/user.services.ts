@@ -8,7 +8,7 @@ import {
   eq,
   ilike,
   inArray,
-  or
+  or,
 } from 'drizzle-orm';
 
 import { db } from '../drizzle/db';
@@ -21,10 +21,7 @@ import { GetPaginatorReturnType, getPaginator } from '../utils/getPaginator';
 
 import { faker } from '@faker-js/faker';
 import { randomInt } from '../utils/common.utils';
-import {
-  GetUsersSchemaType,
-  UserUpdateSchemaType
-} from './user.schema';
+import { GetUsersSchemaType, UserUpdateSchemaType } from './user.schema';
 
 export const updateUser = async (
   payload: UserUpdateSchemaType,
@@ -80,13 +77,10 @@ export type GetUsersReturnType = {
 };
 
 export const deleteUser = async (userId: number) => {
- 
-
   await db.delete(users).where(eq(users.id, userId)).execute();
 };
 
 export const deleteBulkUsers = async (userIds: number[]) => {
-
   await db.delete(users).where(inArray(users.id, userIds)).execute();
 };
 
@@ -141,7 +135,7 @@ export const getUsers = async (
     orderBy: desc(users.id),
   });
 
-  const  refinedResults = results;
+  const refinedResults = results;
 
   return {
     results: refinedResults,
@@ -173,6 +167,7 @@ export const createUser = async (
       .insert(users)
       .values({
         ...payload,
+        isActive: true,
         password: hashedPassword,
       })
       .returning()

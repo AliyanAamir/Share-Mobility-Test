@@ -29,7 +29,8 @@ export const handleInsertMessage = async (
   res: Response,
 ) => {
   try {
-    const newMessage = await insertMessage(req.body);
+    const senderId = req.user.sub;
+    const newMessage = await insertMessage(senderId, req.body);
     return successResponse(res, 'Message successfully created', newMessage);
   } catch (err) {
     if (err instanceof ConflictError) {
@@ -75,8 +76,8 @@ export const handleEditMessage = async (
   }
 };
 
-export const handleGetMessagesAfter = async (
-  req: Request<GetMessageByIdSchemaType, never, GetMessageSchemaType>,
+export const handleGetMessagesBeforeAndAfter = async (
+  req: Request<GetMessageByIdSchemaType, never, never>,
   res: Response,
 ) => {
   try {
@@ -93,13 +94,13 @@ export const handleGetMessagesAfter = async (
     const beforeMessagesQuery = getMessagesBefore({
       userId,
       user2Id,
-      createdAt: new Date(specificMessage?.createdAt as string),
+      createdAt: specificMessage?.createdAt as string,
       limit,
     });
     const afterMessagesQuery = getMessagesAfter({
       userId,
       user2Id,
-      createdAt: new Date(specificMessage?.createdAt as string),
+      createdAt: specificMessage?.createdAt as string,
       limit,
     });
 
@@ -147,8 +148,7 @@ export function handleStablishChatSocket(
       io.to(user).emit('sendMessage', { content, from: io.id });
     }
 
-    await insertMessage({
-      senderId: Number(senderId),
+    await insertMessage(senderId.toString(), {
       content,
       receiverId: userId,
     });

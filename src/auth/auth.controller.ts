@@ -82,7 +82,7 @@ export const handleRegisterUser = async (
 
     return successResponse(
       res,
-      'Account successfully created, pending approval',
+      'Account successfully created',
     );
   } catch (err) {
     if (err instanceof ConflictError) {

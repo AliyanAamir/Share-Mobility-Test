@@ -6,7 +6,6 @@ import {
   handleGetCurrentUser,
   handleLogin,
   handleLogout,
-
   handleRegisterUser,
   handleResetPassword,
   handleSetPassword,
@@ -17,21 +16,19 @@ import {
   loginUserSchema,
   registerUserSchema,
   resetPasswordSchema,
-  setPasswordSchema
+  setPasswordSchema,
 } from './auth.schema';
+import { canAccess } from '../middlewares/can-access.middleware';
 
 export const AUTH_ROUTER_ROOT = '/auth';
 
 const authRouter = Router();
 
-// Register a User (Client) under White Label Admin
 authRouter.post(
   '/register/user',
   validateZodSchema({ body: registerUserSchema }),
   handleRegisterUser,
 );
-
-// Register a White Label Admin
 
 authRouter.post(
   '/login',
@@ -39,9 +36,9 @@ authRouter.post(
   handleLogin,
 );
 
-authRouter.post('/logout', handleLogout);
+authRouter.post('/logout', canAccess(), handleLogout);
 
-authRouter.get('/user',  handleGetCurrentUser);
+authRouter.get('/user', canAccess(), handleGetCurrentUser);
 
 authRouter.post(
   '/forget-password',
@@ -51,7 +48,7 @@ authRouter.post(
 
 authRouter.post(
   '/change-password',
-  
+  canAccess(),
   validateZodSchema({ body: changePasswordSchema }),
   handleChangePassword,
 );
