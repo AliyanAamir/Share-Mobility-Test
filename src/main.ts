@@ -3,7 +3,6 @@ import { BullMQAdapter } from '@bull-board/api/bullMQAdapter';
 import { ExpressAdapter } from '@bull-board/express';
 import compression from 'compression';
 import cookieParser from 'cookie-parser';
-import cors from 'cors';
 import express from 'express';
 import session from 'express-session';
 import helmet from 'helmet';
@@ -24,14 +23,6 @@ const boostrapServer = async () => {
 
   const server = createServer(app);
   useSocketIo(server);
-
-  app.use(
-    cors({
-      origin: [config.CLIENT_SIDE_URL],
-      optionsSuccessStatus: 200,
-      credentials: true,
-    }),
-  );
 
   if (config.NODE_ENV === 'development') {
     app.use(morgan('dev'));
@@ -78,7 +69,6 @@ const boostrapServer = async () => {
     logger.info(`Server is running on http://localhost:${config.PORT}`);
     logger.info(`RESTful API: http://localhost:${config.PORT}/api`);
     logger.info(`BullBoard: http://localhost:${config.PORT}/admin/queues`);
-    logger.info(`Client-side url set to: ${config.CLIENT_SIDE_URL}`);
   });
 };
 
